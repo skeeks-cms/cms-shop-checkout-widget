@@ -1,0 +1,1 @@
+# skeeks-cms-shop-checkout-widget
