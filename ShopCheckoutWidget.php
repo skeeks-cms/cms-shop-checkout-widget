@@ -22,11 +22,11 @@ use yii\helpers\Json;
  * @property ShopBuyer shopBuyer
  *
  * Class ShopCheckoutSimpleWidget
- * @package skeeks\cms\shopCheckoutSimpleWidget
+ * @package skeeks\cms\shopCheckout
  */
 class ShopCheckoutWidget extends Widget
 {
-    public static $autoIdPrefix = 'ShopCheckoutSimpleWidget';
+    public static $autoIdPrefix = 'shopCheckout';
 
     public $viewFile = 'default';
 
@@ -70,13 +70,13 @@ class ShopCheckoutWidget extends Widget
         $this->shopFuser->buyer_id = null;
 
         $this->clientOptions = ArrayHelper::merge($this->clientOptions, [
-            'forimid' => $this->formId,
+            'formid'    => $this->formId,
             'notsubmit' => $this->notSubmitParam,
         ]);
 
         if (!$this->btnSubmitName)
         {
-            $this->btnSubmitName = \Yii::t('skeeks/shop-checkout-simple', 'Submit');
+            $this->btnSubmitName = \Yii::t('skeeks/shop-checkout', 'Submit');
         }
     }
 
@@ -183,12 +183,12 @@ JS
     {
         if (self::$isRegisteredTranslations === false)
         {
-            \Yii::$app->i18n->translations['skeeks/shop-checkout-simple'] = [
+            \Yii::$app->i18n->translations['skeeks/shop-checkout'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
                 'sourceLanguage' => 'en',
                 'basePath' => '@skeeks/cms/shopCheckoutSimple/messages',
                 'fileMap' => [
-                    'skeeks/shop-checkout-simple' => 'main.php',
+                    'skeeks/shop-checkout' => 'main.php',
                 ],
             ];
             self::$isRegisteredTranslations = true;
