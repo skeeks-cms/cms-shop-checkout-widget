@@ -1,0 +1,27 @@
+{
+	"name": "skeeks/cms-shop-checkout-widget",
+	"description": "Widget shop checkout for SkeekS CMS",
+	"keywords": ["yii", "yii2", "skeeks", "cms", "widget", "model"],
+    "homepage": "http://cms.skeeks.com/",
+	"type": "yii2-extension",
+	"license": "GPL-3.0+",
+	"support": {
+        "issues": "http://skeeks.com/",
+        "wiki": "http://cms.skeeks.com/docs/",
+        "source": "https://github.com/skeeks-cms/cms-shop-checkout-widget"
+    },
+	"authors": [
+		{
+			"name": "Semenov Alexander",
+			"email": "semenov@skeeks.com"
+		}
+	],
+	"require": {
+		"skeeks/cms-shop": "*"
+	},
+    "autoload": {
+        "psr-4": {
+            "skeeks\\cms\\shopCheckout\\": ""
+        }
+    }
+}
