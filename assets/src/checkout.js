@@ -20,10 +20,10 @@
                 self.update();
             });
 
-            $("[data-form-reload=true] input[type=radio]").on('change', function()
+            /*$("[data-form-reload=true] input[type=radio]").on('change', function()
             {
                 self.update();
-            });
+            });*/
 
         },
 

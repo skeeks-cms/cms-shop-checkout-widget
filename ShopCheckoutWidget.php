@@ -186,7 +186,7 @@ JS
             \Yii::$app->i18n->translations['skeeks/shop-checkout'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
                 'sourceLanguage' => 'en',
-                'basePath' => '@skeeks/cms/shopCheckoutSimple/messages',
+                'basePath' => '@skeeks/cms/shopCheckout/messages',
                 'fileMap' => [
                     'skeeks/shop-checkout' => 'main.php',
                 ],
