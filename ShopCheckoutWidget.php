@@ -54,6 +54,12 @@ class ShopCheckoutWidget extends Widget
      */
     public $shopBuyer = null;
 
+    /**
+     * Автоматически регистрировать неавторизованного пользователя
+     * @var bool
+     */
+    public $isAutoUserRegister = true;
+
     public $shopErrors = [];
 
     public $notSubmitParam = 'sx-not-submit';
@@ -236,6 +242,11 @@ JS
         if (!\Yii::$app->user->isGuest)
         {
             return \Yii::$app->user->identity;
+        }
+
+        if (!$this->isAutoUserRegister)
+        {
+            return false;
         }
 
         //Нужно создать пользователя

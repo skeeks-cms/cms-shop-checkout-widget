@@ -23,7 +23,13 @@ Example
 
 ```php
 
-<?= \skeeks\cms\shopCheckoutSimple\ShopCheckoutSimpleWidget::widget(); ?>
+<? $checkout = \skeeks\cms\shopCheckout\ShopCheckoutWidget::begin([
+    'btnSubmitWrapperOptions' =>
+    [
+        'style' => 'display: none;'
+    ]
+]); ?>
+<? \skeeks\cms\shopCheckout\ShopCheckoutWidget::end(); ?>
 
 ```
 
