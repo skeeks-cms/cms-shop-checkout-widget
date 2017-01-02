@@ -82,11 +82,24 @@ JS
             <? endif; ?>
 
 
+
             <?= \yii\helpers\Html::beginTag('div', $widget->btnSubmitWrapperOptions); ?>
                 <?=
                     \yii\helpers\Html::button($widget->btnSubmitName, $widget->btnSubmitOptions)
                 ?>
             <?= \yii\helpers\Html::endTag('div'); ?>
+
+            <? if ($error) : ?>
+                <? \yii\bootstrap\Alert::begin([
+                    'options' =>
+                    [
+                        'class' => 'alert-danger',
+                        'style' => 'margin-top: 20px;'
+                    ]
+                ]); ?>
+                    <?= $error; ?>
+                <? \yii\bootstrap\Alert::end(); ?>
+            <? endif; ?>
         <? $form::end(); ?>
     <? else : ?>
         Магазин не настроен

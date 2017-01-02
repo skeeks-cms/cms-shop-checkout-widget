@@ -87,7 +87,7 @@ class ShopCheckoutWidget extends Widget
     public function run()
     {
         $rr = new RequestResponse();
-        $errors = [];
+        $error = "";
 
         //Установка присланных данных текущему покупателю
         if ($post = \Yii::$app->request->post())
@@ -162,14 +162,14 @@ JS
 );
                     } catch (\Exception $e)
                     {
-                        print_r("Ошибка: " . $e->getMessage());
+                        $error = \Yii::t('skeeks/shop-checkout', 'Error') . ": " . $e->getMessage();
                     }
 
 
 
                 } else
                 {
-                    print_r("Ошибка 1");
+                    $error = \Yii::t('skeeks/shop-checkout', 'Check the correctness of filling the form fields');
                     /*print_r($this->shopFuser->firstErrors);
                     print_r($this->shopBuyer->firstErrors);
                     print_r($this->shopBuyer->relatedPropertiesModel->firstErrors);*/
@@ -177,7 +177,9 @@ JS
             }
         }
 
-        return $this->render($this->viewFile);
+        return $this->render($this->viewFile, [
+            'error' => $error
+        ]);
     }
 
 
