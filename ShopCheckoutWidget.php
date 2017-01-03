@@ -157,6 +157,9 @@ class ShopCheckoutWidget extends Widget
                         {
                             $this->shopFuser->user_id = $user->id;
                             $this->shopFuser->save();
+
+                            $buyer->cms_user_id = $user->id;
+                            $buyer->save();
                         }
 
                         $newOrder = ShopOrder::createOrderByFuser($this->shopFuser);
