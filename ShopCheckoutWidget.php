@@ -119,7 +119,7 @@ class ShopCheckoutWidget extends Widget
             }
         }
 
-        if ($rr->isRequestPjaxPost())
+        if ($rr->isRequestPjaxPost() && \Yii::$app->request->post($this->id))
         {
             //Если это не просто перестроение формы, то запускается процесс создания заказа
             if (!\Yii::$app->request->post($this->notSubmitParam))

@@ -83,6 +83,9 @@ JS
 
 
 
+            <div style="display: none;">
+                <?= \yii\helpers\Html::hiddenInput($widget->id, $widget->id); ?>
+            </div>
             <?= \yii\helpers\Html::beginTag('div', $widget->btnSubmitWrapperOptions); ?>
                 <?=
                     \yii\helpers\Html::button($widget->btnSubmitName, $widget->btnSubmitOptions)
