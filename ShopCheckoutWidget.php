@@ -55,6 +55,11 @@ class ShopCheckoutWidget extends Widget
     public $shopBuyer = null;
 
     /**
+     * @var bool
+     */
+    public $user_auto_create = true;
+
+    /**
      * Автоматически регистрировать неавторизованного пользователя
      * @var bool
      */
@@ -152,14 +157,18 @@ class ShopCheckoutWidget extends Widget
 
                     try
                     {
-                        $user = $this->createUser();
-                        if ($user)
+                        if ($this->user_auto_create)
                         {
-                            $this->shopFuser->user_id = $user->id;
-                            $this->shopFuser->save();
+                            $user = $this->createUser();
+                            if ($user)
+                            {
+                                $this->shopFuser->user_id = $user->id;
+                                $this->shopFuser->save();
 
-                            $buyer->cms_user_id = $user->id;
-                            $buyer->save();
+                                $buyer->cms_user_id = $user->id;
+                                $buyer->save();
+                            }
+
                         }
 
                         $newOrder = ShopOrder::createOrderByFuser($this->shopFuser);
