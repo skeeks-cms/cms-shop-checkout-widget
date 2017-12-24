@@ -17,6 +17,7 @@ use skeeks\cms\shop\models\ShopOrder;
 use skeeks\cms\shop\models\ShopPersonTypeProperty;
 use yii\base\Exception;
 use yii\base\Widget;
+use yii\grid\GridViewAsset;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
@@ -97,6 +98,8 @@ class ShopCheckoutWidget extends Widget
 
     public function run()
     {
+        GridViewAsset::register(\Yii::$app->view);
+
         $rr = new RequestResponse();
         $error = "";
 
