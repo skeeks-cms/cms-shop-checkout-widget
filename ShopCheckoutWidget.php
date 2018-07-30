@@ -194,9 +194,7 @@ JS
                         \Yii::$app->response->redirect($orderUrl);
                         \Yii::$app->response->headers->set('X-Pjax-Url', $orderUrl);
 
-                        print_r(\Yii::$app->response->headers->toArray());die;
-
-                        return '1';
+                        \Yii::$app->end();
 
                     } catch (\Exception $e)
                     {
