@@ -16,6 +16,7 @@ use skeeks\cms\shop\models\ShopFuser;
 use skeeks\cms\shop\models\ShopOrder;
 use skeeks\cms\shop\models\ShopPersonTypeProperty;
 use yii\base\Exception;
+use yii\base\UserException;
 use yii\base\Widget;
 use yii\grid\GridViewAsset;
 use yii\helpers\ArrayHelper;
@@ -46,9 +47,9 @@ class ShopCheckoutWidget extends Widget
     ];
 
     /**
-     * @var ShopFuser
+     * @var ShopOrder
      */
-    public $shopFuser = null;
+    public $shopOrder = null;
 
     /**
      * @var ShopBuyer
@@ -77,13 +78,13 @@ class ShopCheckoutWidget extends Widget
 
         $this->options['id'] = $this->id;
 
-        if (!$this->shopFuser)
+        if (!$this->shopOrder)
         {
-            $this->shopFuser = \Yii::$app->shop->shopFuser;
-            $this->shopFuser->loadDefaultValues();
+            $this->shopOrder = \Yii::$app->shop->cart->shopOrder;
+            $this->shopOrder->loadDefaultValues();
         }
         //Покупателя никогда нет
-        $this->shopFuser->buyer_id = null;
+        $this->shopOrder->shop_buyer_id = null;
 
         $this->clientOptions = ArrayHelper::merge($this->clientOptions, [
             'formid'    => $this->formId,
@@ -106,15 +107,16 @@ class ShopCheckoutWidget extends Widget
         //Установка присланных данных текущему покупателю
         if ($post = \Yii::$app->request->post())
         {
-            $this->shopFuser->load($post);
-            if (!$this->shopFuser->save())
+
+            $this->shopOrder->load($post);
+            if (!$this->shopOrder->save())
             {
-                \Yii::error("Error widget: " . Json::encode($this->shopFuser->errors), static::class);
+                \Yii::error("Error widget: " . Json::encode($this->shopOrder->errors), static::class);
             }
         }
-
+        $this->shopOrder->validate();
         //Создание покупателя в зависимости от выбранного типа
-        $this->shopBuyer = $this->shopFuser->personType->createModelShopBuyer();
+        $this->shopBuyer = $this->shopOrder->shopPersonType->createModelShopBuyer();
 
         //Установка данных покупателя
         $shopBuyer = $this->shopBuyer;
@@ -132,7 +134,7 @@ class ShopCheckoutWidget extends Widget
             //Если это не просто перестроение формы, то запускается процесс создания заказа
             if (!\Yii::$app->request->post($this->notSubmitParam))
             {
-                if ($this->shopFuser->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate())
+                if ($this->shopOrder->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate())
                 {
                     //Сохранение покупателя
                     $buyer = $this->shopBuyer;
@@ -156,7 +158,7 @@ class ShopCheckoutWidget extends Widget
                     }
 
                     //Текущий профиль покупателя присваивается текущей корзине
-                    $this->shopFuser->buyer_id = $this->shopBuyer->id;
+                    $this->shopOrder->shop_buyer_id = $this->shopBuyer->id;
 
                     try
                     {
@@ -165,24 +167,40 @@ class ShopCheckoutWidget extends Widget
                             $user = $this->createUser();
                             if ($user)
                             {
-                                $this->shopFuser->user_id = $user->id;
-                                $this->shopFuser->save();
-
                                 $buyer->cms_user_id = $user->id;
                                 $buyer->save();
                             }
 
                         }
 
-                        $newOrder = ShopOrder::createOrderByFuser($this->shopFuser);
-                        $orderUrl = $newOrder->publicUrl;
+                        $this->shopOrder->is_created = true;
+                        if (!$this->shopOrder->save()) {
+                            throw new UserException(print_r($this->shopOrder->errors, true));
+                        }
 
-                        $this->view->registerJs(<<<JS
+
+                        $this->shopOrder->shopCart->shop_order_id = null;
+                        $this->shopOrder->shopCart->save();
+
+                        $orderUrl = $this->shopOrder->url;
+
+                        //$newOrder = ShopOrder::createOrderByFuser($this->shopFuser);
+
+
+                        /*$this->view->registerJs(<<<JS
 location.href='{$orderUrl}';
 JS
-);
+);*/
+                        \Yii::$app->response->redirect($orderUrl);
+                        \Yii::$app->response->headers->set('X-Pjax-Url', $orderUrl);
+
+                        print_r(\Yii::$app->response->headers->toArray());die;
+
+                        return '1';
+
                     } catch (\Exception $e)
                     {
+                        throw $e;
                         $error = \Yii::t('skeeks/shop-checkout', 'Error') . ": " . $e->getMessage();
                     }
 

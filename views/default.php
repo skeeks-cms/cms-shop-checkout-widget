@@ -10,7 +10,7 @@
 \skeeks\cms\shopCheckout\assets\ShopCheckoutWidgetAsset::register($this);
 
 $widget     = $this->context;
-$shopFuser  = $widget->shopFuser;
+$shopOrder  = $widget->shopOrder;
 $clientOptions = \yii\helpers\Json::encode($widget->clientOptions);
 ?>
 <?= \yii\helpers\Html::beginTag('div', $widget->options); ?>
@@ -50,7 +50,7 @@ JS
     <? if (count(\Yii::$app->shop->shopPersonTypes) <= 1) : ?>
         <div style="display: none;">
     <? endif; ?>
-        <?= $form->field($shopFuser, 'person_type_id')->radioList(
+        <?= $form->field($shopOrder, 'shop_person_type_id')->radioList(
             \yii\helpers\ArrayHelper::map(\Yii::$app->shop->shopPersonTypes, 'id', 'name'),
             [
                 'data-form-reload' => 'true'
@@ -65,16 +65,16 @@ JS
             <? endforeach; ?>
 
 
-            <?= $form->field($widget->shopFuser, 'delivery_id')->label('Способ доставки')->radioList(
-                \yii\helpers\ArrayHelper::map(\skeeks\cms\shop\models\ShopDelivery::find()->active()->all(), 'id', 'name'),
+            <?= $form->field($widget->shopOrder, 'shop_delivery_id')->label('Способ доставки')->radioList(
+                \yii\helpers\ArrayHelper::map(\skeeks\cms\shop\models\ShopDelivery::find()->orderBy(['priority' => SORT_ASC])->active()->all(), 'id', 'name'),
                 [
                     'data-form-reload' => 'true'
                 ]
             ); ?>
 
-            <? if ($widget->shopFuser->paySystems) : ?>
-                <?= $form->field($widget->shopFuser, 'pay_system_id')->label('Способ оплаты')->radioList(
-                    \yii\helpers\ArrayHelper::map($widget->shopFuser->paySystems, 'id', 'name'),
+            <? if ($widget->shopOrder->paySystems) : ?>
+                <?= $form->field($widget->shopOrder, 'shop_pay_system_id')->label('Способ оплаты')->radioList(
+                    \yii\helpers\ArrayHelper::map($widget->shopOrder->paySystems, 'id', 'name'),
                     [
                         'data-form-reload' => 'true'
                     ]
