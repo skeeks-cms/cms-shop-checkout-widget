@@ -17,11 +17,11 @@
 		}
 	],
 	"require": {
-		"skeeks/cms-shop": "*"
+		"skeeks/cms-shop": "^2.2.6 || dev-master"
 	},
     "autoload": {
         "psr-4": {
-            "skeeks\\cms\\shopCheckout\\": ""
+            "skeeks\\cms\\shopCheckout\\": "src/"
         }
     }
 }
