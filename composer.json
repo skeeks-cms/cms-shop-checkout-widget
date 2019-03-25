@@ -4,7 +4,7 @@
 	"keywords": ["yii", "yii2", "skeeks", "cms", "widget", "model"],
     "homepage": "https://cms.skeeks.com/",
 	"type": "yii2-extension",
-	"license": "GPL-3.0+",
+	"license": "BSD-3-Clause",
 	"support": {
         "issues": "https://skeeks.com/",
         "wiki": "https://cms.skeeks.com/docs/",

@@ -93,7 +93,7 @@ JS
             <?= \yii\helpers\Html::endTag('div'); ?>
 
             <? if ($error) : ?>
-                <? \yii\bootstrap\Alert::begin([
+                <? $alert = \yii\bootstrap\Alert::begin([
                     'options' =>
                     [
                         'class' => 'alert-danger',
@@ -101,7 +101,7 @@ JS
                     ]
                 ]); ?>
                     <?= $error; ?>
-                <? \yii\bootstrap\Alert::end(); ?>
+                <? $alert::end(); ?>
             <? endif; ?>
         <? $form::end(); ?>
     <? else : ?>
