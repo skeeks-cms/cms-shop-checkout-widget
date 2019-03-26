@@ -5,6 +5,7 @@
  * @copyright 2010 SkeekS (СкикС)
  * @date 14.10.2016
  */
+
 namespace skeeks\cms\shopCheckout;
 
 use skeeks\cms\components\Cms;
@@ -12,7 +13,6 @@ use skeeks\cms\helpers\RequestResponse;
 use skeeks\cms\models\CmsUser;
 use skeeks\cms\models\forms\SignupForm;
 use skeeks\cms\shop\models\ShopBuyer;
-use skeeks\cms\shop\models\ShopFuser;
 use skeeks\cms\shop\models\ShopOrder;
 use skeeks\cms\shop\models\ShopPersonTypeProperty;
 use yii\base\Exception;
@@ -23,8 +23,8 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
- * @property string formId
- * @property bool shopIsReady
+ * @property string    formId
+ * @property bool      shopIsReady
  * @property ShopBuyer shopBuyer
  *
  * Class ShopCheckoutSimpleWidget
@@ -39,11 +39,11 @@ class ShopCheckoutWidget extends Widget
     public $options = [];
     public $clientOptions = [];
 
-    public $btnSubmitWrapperOptions     = [];
-    public $btnSubmitName               = '';
-    public $btnSubmitOptions            = [
+    public $btnSubmitWrapperOptions = [];
+    public $btnSubmitName = '';
+    public $btnSubmitOptions = [
         'class' => 'btn btn-primary',
-        'type' => 'submit',
+        'type'  => 'submit',
     ];
 
     /**
@@ -78,8 +78,7 @@ class ShopCheckoutWidget extends Widget
 
         $this->options['id'] = $this->id;
 
-        if (!$this->shopOrder)
-        {
+        if (!$this->shopOrder) {
             $this->shopOrder = \Yii::$app->shop->cart->shopOrder;
             $this->shopOrder->loadDefaultValues();
         }
@@ -91,8 +90,7 @@ class ShopCheckoutWidget extends Widget
             'notsubmit' => $this->notSubmitParam,
         ]);
 
-        if (!$this->btnSubmitName)
-        {
+        if (!$this->btnSubmitName) {
             $this->btnSubmitName = \Yii::t('skeeks/shop-checkout', 'Submit');
         }
     }
@@ -105,13 +103,11 @@ class ShopCheckoutWidget extends Widget
         $error = "";
 
         //Установка присланных данных текущему покупателю
-        if ($post = \Yii::$app->request->post())
-        {
+        if ($post = \Yii::$app->request->post()) {
 
             $this->shopOrder->load($post);
-            if (!$this->shopOrder->save())
-            {
-                \Yii::error("Error widget: " . Json::encode($this->shopOrder->errors), static::class);
+            if (!$this->shopOrder->save()) {
+                \Yii::error("Error widget: ".Json::encode($this->shopOrder->errors), static::class);
             }
         }
         $this->shopOrder->validate();
@@ -120,53 +116,41 @@ class ShopCheckoutWidget extends Widget
 
         //Установка данных покупателя
         $shopBuyer = $this->shopBuyer;
-        if ($shopBuyer)
-        {
-            if ($post = \Yii::$app->request->post())
-            {
+        if ($shopBuyer) {
+            if ($post = \Yii::$app->request->post()) {
                 $this->shopBuyer->load($post);
                 $this->shopBuyer->relatedPropertiesModel->load($post);
             }
         }
 
-        if ($rr->isRequestPjaxPost() && \Yii::$app->request->post($this->id))
-        {
+        if ($rr->isRequestPjaxPost() && \Yii::$app->request->post($this->id)) {
             //Если это не просто перестроение формы, то запускается процесс создания заказа
-            if (!\Yii::$app->request->post($this->notSubmitParam))
-            {
-                if ($this->shopOrder->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate())
-                {
-                    //Сохранение покупателя
-                    $buyer = $this->shopBuyer;
-                    if ($buyer->isNewRecord)
-                    {
-                        if ($buyerName = $this->getBuyerName())
-                        {
-                            $buyer->name = $buyerName;
+            if (!\Yii::$app->request->post($this->notSubmitParam)) {
+                if ($this->shopOrder->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate()) {
+                    try {
+                        //Сохранение покупателя
+                        $buyer = $this->shopBuyer;
+                        if ($buyer->isNewRecord) {
+                            if ($buyerName = $this->getBuyerName()) {
+                                $buyer->name = $buyerName;
+                            }
+
+                            if (!$buyer->save()) {
+                                throw new Exception('Not save buyer');
+                            }
                         }
 
-                        if (!$buyer->save())
-                        {
-                            throw new Exception('Not save buyer');
+                        //Сохранение данных покупателя
+                        if (!$this->shopBuyer->relatedPropertiesModel->save()) {
+                            throw new Exception('Not save buyer data');
                         }
-                    }
 
-                    //Сохранение данных покупателя
-                    if (!$this->shopBuyer->relatedPropertiesModel->save())
-                    {
-                        throw new Exception('Not save buyer data');
-                    }
+                        //Текущий профиль покупателя присваивается текущей корзине
+                        $this->shopOrder->shop_buyer_id = $this->shopBuyer->id;
 
-                    //Текущий профиль покупателя присваивается текущей корзине
-                    $this->shopOrder->shop_buyer_id = $this->shopBuyer->id;
-
-                    try
-                    {
-                        if ($this->user_auto_create)
-                        {
+                        if ($this->user_auto_create) {
                             $user = $this->createUser();
-                            if ($user)
-                            {
+                            if ($user) {
                                 $buyer->cms_user_id = $user->id;
                                 $buyer->save();
                             }
@@ -196,16 +180,13 @@ JS
 
                         \Yii::$app->end();
 
-                    } catch (\Exception $e)
-                    {
-                        throw $e;
-                        $error = \Yii::t('skeeks/shop-checkout', 'Error') . ": " . $e->getMessage();
+                    } catch (\Exception $e) {
+                        /*throw $e;*/
+                        $error = \Yii::t('skeeks/shop-checkout', 'Error').": ".$e->getMessage();
                     }
 
 
-
-                } else
-                {
+                } else {
                     $error = \Yii::t('skeeks/shop-checkout', 'Check the correctness of filling the form fields');
                     /*print_r($this->shopFuser->firstErrors);
                     print_r($this->shopBuyer->firstErrors);
@@ -215,7 +196,7 @@ JS
         }
 
         return $this->render($this->viewFile, [
-            'error' => $error
+            'error' => $error,
         ]);
     }
 
@@ -228,19 +209,17 @@ JS
         $rp = $this->shopBuyer->relatedPropertiesModel;
         $modelBuyerName = null;
 
-        foreach ($rp->toArray() as $code => $value)
-        {
+        foreach ($rp->toArray() as $code => $value) {
             /**
              * @var $property ShopPersonTypeProperty
              */
             $property = $rp->getRelatedProperty($code);
-            if ($property->is_buyer_name == Cms::BOOL_Y)
-            {
+            if ($property->is_buyer_name == Cms::BOOL_Y) {
                 $modelBuyerName[] = $value;
             }
         }
 
-        return $modelBuyerName ? implode(", ", $modelBuyerName) : $this->shopBuyer->shopPersonType->name . " (" . \Yii::$app->formatter->asDate(time(), 'medium') . ")";
+        return $modelBuyerName ? implode(", ", $modelBuyerName) : $this->shopBuyer->shopPersonType->name." (".\Yii::$app->formatter->asDate(time(), 'medium').")";
     }
 
     /**
@@ -248,17 +227,15 @@ JS
      */
     public function getEmail()
     {
-        $rp         = $this->shopBuyer->relatedPropertiesModel;
-        $email      = "";
+        $rp = $this->shopBuyer->relatedPropertiesModel;
+        $email = "";
 
-        foreach ($rp->toArray() as $code => $value)
-        {
+        foreach ($rp->toArray() as $code => $value) {
             /**
              * @var $property ShopPersonTypeProperty
              */
             $property = $rp->getRelatedProperty($code);
-            if ($property->is_user_email == Cms::BOOL_Y)
-            {
+            if ($property->is_user_email == Cms::BOOL_Y) {
                 $email = $value;
             }
         }
@@ -270,13 +247,11 @@ JS
     public function createUser()
     {
         //Пользователь уже авторизован
-        if (!\Yii::$app->user->isGuest)
-        {
+        if (!\Yii::$app->user->isGuest) {
             return \Yii::$app->user->identity;
         }
 
-        if (!$this->isAutoUserRegister)
-        {
+        if (!$this->isAutoUserRegister) {
             return false;
         }
 
@@ -287,64 +262,54 @@ JS
 
         $rp = $this->shopBuyer->relatedPropertiesModel;
         //Проверка свойств
-        foreach ($rp->toArray($rp->attributes()) as $code => $value)
-        {
+        foreach ($rp->toArray($rp->attributes()) as $code => $value) {
             $property = $rp->getRelatedProperty($code);
             /**
              * @var $property ShopPersonTypeProperty
              */
-            if ($property->is_user_name == Cms::BOOL_Y)
-            {
+            if ($property->is_user_name == Cms::BOOL_Y) {
                 $userName = $value;
             }
 
-            if ($property->is_user_username == Cms::BOOL_Y)
-            {
+            if ($property->is_user_username == Cms::BOOL_Y) {
                 $userUsername = $value;
             }
 
-            if ($property->is_user_phone == Cms::BOOL_Y)
-            {
+            if ($property->is_user_phone == Cms::BOOL_Y) {
                 $userPhone = $value;
             }
         }
 
 
         $userEmail = $this->getEmail();
-        if (!$userEmail)
-        {
+        if (!$userEmail) {
             return false;
         }
 
-        if ($userExist = CmsUser::find()->where(['email' => $userEmail])->one())
-        {
+        if ($userExist = CmsUser::find()->where(['email' => $userEmail])->one()) {
             return false;
         }
 
-        $newUser             = new SignupForm();
-        $newUser->scenario   = SignupForm::SCENARION_ONLYEMAIL;
-        $newUser->email      = $userEmail;
+        $newUser = new SignupForm();
+        $newUser->scenario = SignupForm::SCENARION_ONLYEMAIL;
+        $newUser->email = $userEmail;
 
-        if (!$user = $newUser->signup())
-        {
+        if (!$user = $newUser->signup()) {
             return false;
         }
 
-        if ($userUsername)
-        {
-            $user->username      = $userUsername;
+        if ($userUsername) {
+            $user->username = $userUsername;
             $user->save();
         }
 
-        if ($userName)
-        {
-            $user->name      = $userName;
+        if ($userName) {
+            $user->name = $userName;
             $user->save();
         }
 
-        if ($userPhone)
-        {
-            $user->phone      = $userPhone;
+        if ($userPhone) {
+            $user->phone = $userPhone;
             $user->save();
         }
 
@@ -358,13 +323,11 @@ JS
     {
         $this->shopErrors = [];
 
-        if (!\Yii::$app->shop->shopPersonTypes)
-        {
+        if (!\Yii::$app->shop->shopPersonTypes) {
             $this->shopErrors[] = 'Не заведены типы профилей покупателей';
         }
 
-        if ($this->shopErrors)
-        {
+        if ($this->shopErrors) {
             return false;
         }
 
@@ -376,22 +339,20 @@ JS
      */
     public function getFormId()
     {
-        return $this->id . "-form";
+        return $this->id."-form";
     }
-
 
 
     static public $isRegisteredTranslations = false;
 
     static public function registerTranslations()
     {
-        if (self::$isRegisteredTranslations === false)
-        {
+        if (self::$isRegisteredTranslations === false) {
             \Yii::$app->i18n->translations['skeeks/shop-checkout'] = [
-                'class' => 'yii\i18n\PhpMessageSource',
+                'class'          => 'yii\i18n\PhpMessageSource',
                 'sourceLanguage' => 'en',
-                'basePath' => '@skeeks/cms/shopCheckout/messages',
-                'fileMap' => [
+                'basePath'       => '@skeeks/cms/shopCheckout/messages',
+                'fileMap'        => [
                     'skeeks/shop-checkout' => 'main.php',
                 ],
             ];
