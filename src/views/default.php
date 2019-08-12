@@ -15,18 +15,16 @@ $clientOptions = \yii\helpers\Json::encode($widget->clientOptions);
 ?>
 <?= \yii\helpers\Html::beginTag('div', $widget->options); ?>
 
-    <? if (\Yii::$app->user->isGuest) : ?>
-        <!-- EMPTY CART -->
+    <?/* if (\Yii::$app->user->isGuest) : */?><!--
         <div class="panel panel-default">
             <div class="panel-body">
                 <strong>Вы не авторизованы на сайте.</strong><br />
                 Для постоянных покупателей у нас действует система бонусов и скидок.<br />
-                Если у вас уже есть аккаунт, то вы можете <a href="<?= \skeeks\cms\helpers\UrlHelper::construct('cms/auth/login')->setCurrentRef(); ?>" data-pjax="0">войти на сайт</a>. <br />
-                <!--<span class="label label-success">this is just an empty cart example</span>-->
+                Если у вас уже есть аккаунт, то вы можете <a href="<?/*= \skeeks\cms\helpers\UrlHelper::construct('cms/auth/login')->setCurrentRef(); */?>" data-pjax="0">войти на сайт</a>. <br />
             </div>
         </div>
     <!-- /EMPTY CART -->
-    <? endif; ?>
+    <?/* endif; */?>
 
     <? if ($widget->shopIsReady) : ?>
     <?php $form = \yii\bootstrap\ActiveForm::begin([
