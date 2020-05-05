@@ -57,23 +57,25 @@ JS
     <? if (count(\Yii::$app->shop->shopPersonTypes) <= 1) : ?>
         </div>
     <? endif; ?>
-
+        
+            <? $widget->shopBuyer->relatedPropertiesModel->toArray(); ?>
             <? foreach ($widget->shopBuyer->relatedProperties as $property) : ?>
                 <?= $property->renderActiveForm($form, $widget->shopBuyer)?>
             <? endforeach; ?>
 
-
-            <?= $form->field($widget->shopOrder, 'shop_delivery_id')->label('Способ доставки')->radioList(
-                \yii\helpers\ArrayHelper::map(\skeeks\cms\shop\models\ShopDelivery::find()->orderBy(['priority' => SORT_ASC])->active()->all(), 'id', 'name'),
-                [
-                    'data-form-reload' => 'true'
-                ]
-            ); ?>
+            <? if ($deliveries = \skeeks\cms\shop\models\ShopDelivery::getAllowForOrder()) : ?>
+                <?= $form->field($widget->shopOrder, 'shop_delivery_id')->label('Способ доставки')->radioList(
+                    \yii\helpers\ArrayHelper::map(
+                            $deliveries, 'id', 'name'), [
+                        'data-form-reload' => 'true'
+                    ]
+                ); ?>
+            <? endif; ?>
+            
 
             <? if ($widget->shopOrder->paySystems) : ?>
                 <?= $form->field($widget->shopOrder, 'shop_pay_system_id')->label('Способ оплаты')->radioList(
-                    \yii\helpers\ArrayHelper::map($widget->shopOrder->paySystems, 'id', 'name'),
-                    [
+                    \yii\helpers\ArrayHelper::map($widget->shopOrder->paySystems, 'id', 'name'), [
                         'data-form-reload' => 'true'
                     ]
                 ); ?>
@@ -100,7 +102,9 @@ JS
                 ]); ?>
                     <?= $error; ?>
                 <? $alert::end(); ?>
+                
             <? endif; ?>
+        <?= $form->errorSummary([$widget->shopOrder, $widget->shopBuyer, $widget->shopBuyer->relatedPropertiesModel]); ?>
         <? $form::end(); ?>
     <? else : ?>
         Магазин не настроен
