@@ -20,6 +20,7 @@ use yii\base\UserException;
 use yii\base\Widget;
 use yii\grid\GridViewAsset;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Json;
 
 /**
@@ -77,6 +78,7 @@ class ShopCheckoutWidget extends Widget
         static::registerTranslations();
 
         $this->options['id'] = $this->id;
+        Html::addCssClass($this->options, "sx-shop-checkout-widget");
 
         if (!$this->shopOrder) {
             $this->shopOrder = \Yii::$app->shop->cart->shopOrder;
