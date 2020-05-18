@@ -306,7 +306,7 @@ JS
         }
 
         if ($userName) {
-            $user->name = $userName;
+            $user->first_name = $userName;
             $user->save();
         }
 
