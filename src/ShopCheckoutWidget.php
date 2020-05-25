@@ -166,6 +166,7 @@ class ShopCheckoutWidget extends Widget
                         }
 
                         $this->shopOrder->is_created = true;
+                        $this->shopOrder->created_at = time();
                         if (!$this->shopOrder->save()) {
                             throw new UserException(print_r($this->shopOrder->errors, true));
                         }
