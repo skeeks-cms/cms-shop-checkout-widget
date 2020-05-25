@@ -62,6 +62,16 @@ JS
         <?= $property->renderActiveForm($form, $widget->shopBuyer) ?>
     <? endforeach; ?>
 
+    <?php if ($widget->is_show_personal_permission) : ?>
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" required value="1" checked id="sx-allow">
+                <label class="custom-control-label" for="sx-allow">Согласен на обработку персональных данных</label>
+            </div>
+        </div>
+    <?php endif; ?>
+
+
     <? if ($deliveries = \skeeks\cms\shop\models\ShopDelivery::getAllowForOrder()) : ?>
         <div class="sx-delivery-wrapper">
             <?= $form->field($widget->shopOrder, 'shop_delivery_id')
@@ -69,39 +79,41 @@ JS
                 ->radioList(
                     \yii\helpers\ArrayHelper::map(
                         $deliveries, 'id', 'name'), [
-                            'data-form-reload' => 'true',
-                            'item' => function ($i, $label, $name, $checked, $value) {
-                                /**
-                                 * @var $delivery \skeeks\cms\shop\models\ShopDelivery
-                                 */
-                                $delivery = \skeeks\cms\shop\models\ShopDelivery::findOne($value);
+                    'data-form-reload' => 'true',
+                    'item'             => function ($i, $label, $name, $checked, $value) {
+                        /**
+                         * @var $delivery \skeeks\cms\shop\models\ShopDelivery
+                         */
+                        $delivery = \skeeks\cms\shop\models\ShopDelivery::findOne($value);
 
-                                $options = [
-                                    'id' => $name . $value,
-                                    'class' => 'custom-control-input',
-                                    'value' => $value
-                                ];
-                                $wrapperOptions = \yii\helpers\ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['custom-control', 'custom-radio']]);
-                                /*if ($this->inline) {
-                                    \yii\helpers\Html::addCssClass($wrapperOptions, 'custom-control-inline');
-                                }*/
+                        $options = [
+                            'id'    => $name.$value,
+                            'class' => 'custom-control-input',
+                            'value' => $value,
+                        ];
+                        $wrapperOptions = \yii\helpers\ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['custom-control', 'custom-radio']]);
+                        /*if ($this->inline) {
+                            \yii\helpers\Html::addCssClass($wrapperOptions, 'custom-control-inline');
+                        }*/
 
-                                $html = \yii\helpers\Html::beginTag('div', $wrapperOptions) . "\n" .
-                                    \yii\helpers\Html::radio($name, $checked, $options) . "\n" .
-                                    \yii\helpers\Html::label($label, $name . $value, ['class' => 'custom-control-label']) . "\n" .
-                                    "<div class='float-right sx-delivery-price'>" . $delivery->money . "</div>";
-                                $html .= \yii\helpers\Html::endTag('div') . "\n";
+                        $html = \yii\helpers\Html::beginTag('div', $wrapperOptions)."\n".
+                            \yii\helpers\Html::radio($name, $checked, $options)."\n".
+                            \yii\helpers\Html::label($label, $name.$value, ['class' => 'custom-control-label'])."\n".
+                            "<div class='float-right sx-delivery-price'>". 
+                            (float) $delivery->money->amount > 0 ? $delivery->money : ""
+                            ."</div>";
+                        $html .= \yii\helpers\Html::endTag('div')."\n";
 
-                                return $html;
-                            }
-                            /*'item' => function($index, $label, $name, $checked, $value) {
-                                return \yii\helpers\Html::radio($name, $checked, array_merge([
-                                    'value' => $value,
-                                    'label' => $label,
-                                    'template' => "<div class=\"custom-control custom-radio\">\n{input}\n{label}\n{error}\n{hint}\n</div>"
-                                ]));
-                            }*/
-                        ])
+                        return $html;
+                    }
+                    /*'item' => function($index, $label, $name, $checked, $value) {
+                        return \yii\helpers\Html::radio($name, $checked, array_merge([
+                            'value' => $value,
+                            'label' => $label,
+                            'template' => "<div class=\"custom-control custom-radio\">\n{input}\n{label}\n{error}\n{hint}\n</div>"
+                        ]));
+                    }*/
+                ])
             ?>
         </div>
     <? endif; ?>

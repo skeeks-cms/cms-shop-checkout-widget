@@ -63,6 +63,12 @@ class ShopCheckoutWidget extends Widget
     public $user_auto_create = true;
 
     /**
+     * Показывать согласие на обработку персональных данных
+     * @var bool 
+     */
+    public $is_show_personal_permission = true;
+
+    /**
      * Автоматически регистрировать неавторизованного пользователя
      * @var bool
      */
