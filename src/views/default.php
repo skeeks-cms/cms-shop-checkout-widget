@@ -100,7 +100,7 @@ JS
                             \yii\helpers\Html::radio($name, $checked, $options)."\n".
                             \yii\helpers\Html::label($label, $name.$value, ['class' => 'custom-control-label'])."\n".
                             "<div class='float-right sx-delivery-price'>". 
-                            (float) $delivery->money->amount > 0 ? $delivery->money : ""
+                            ((float) $delivery->money->amount > 0 ? $delivery->money : "")
                             ."</div>";
                         $html .= \yii\helpers\Html::endTag('div')."\n";
 
