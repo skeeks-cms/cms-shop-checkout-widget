@@ -134,6 +134,7 @@ class ShopCheckoutWidget extends Widget
         if ($rr->isRequestPjaxPost() && \Yii::$app->request->post($this->id)) {
             //Если это не просто перестроение формы, то запускается процесс создания заказа
             if (!\Yii::$app->request->post($this->notSubmitParam)) {
+                $this->shopOrder->is_created = true;
                 if ($this->shopOrder->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate()) {
                     try {
                         //Сохранение покупателя
@@ -165,7 +166,7 @@ class ShopCheckoutWidget extends Widget
 
                         }
 
-                        $this->shopOrder->is_created = true;
+
                         $this->shopOrder->created_at = time();
                         if (!$this->shopOrder->save()) {
                             throw new UserException(print_r($this->shopOrder->errors, true));
