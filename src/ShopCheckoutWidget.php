@@ -176,7 +176,7 @@ class ShopCheckoutWidget extends Widget
                         $this->shopOrder->shopCart->shop_order_id = null;
                         $this->shopOrder->shopCart->save();
 
-                        $orderUrl = $this->shopOrder->url;
+                        $orderUrl = $this->shopOrder->getUrl(['is_created' => 'true']);
 
                         //$newOrder = ShopOrder::createOrderByFuser($this->shopFuser);
 
