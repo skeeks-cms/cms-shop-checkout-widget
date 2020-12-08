@@ -74,11 +74,17 @@ JS
 
     <? if ($deliveries = \skeeks\cms\shop\models\ShopDelivery::getAllowForOrder()) : ?>
         <div class="sx-delivery-wrapper">
+
+            <div style="display: none;">
+                <?= $form->field($widget->shopOrder, 'delivery_handler_data_jsoned')->textarea([
+                    'data-form-reload' => 'true',
+                ]); ?>
+            </div>
+
             <?= $form->field($widget->shopOrder, 'shop_delivery_id')
                 ->label('Доставка')
                 ->radioList(
-                    \yii\helpers\ArrayHelper::map(
-                        $deliveries, 'id', 'name'), [
+                    \yii\helpers\ArrayHelper::map($deliveries, 'id', 'name'), [
                     'data-form-reload' => 'true',
                     'item'             => function ($i, $label, $name, $checked, $value) {
                         /**
@@ -99,8 +105,8 @@ JS
                         $html = \yii\helpers\Html::beginTag('div', $wrapperOptions)."\n".
                             \yii\helpers\Html::radio($name, $checked, $options)."\n".
                             \yii\helpers\Html::label($label, $name.$value, ['class' => 'custom-control-label'])."\n".
-                            "<div class='float-right sx-delivery-price'>". 
-                            ((float) $delivery->money->amount > 0 ? $delivery->money : "")
+                            "<div class='float-right sx-delivery-price'>".
+                            ((float)$delivery->money->amount > 0 ? $delivery->money : "")
                             ."</div>";
                         $html .= \yii\helpers\Html::endTag('div')."\n";
 
@@ -115,7 +121,21 @@ JS
                     }*/
                 ])
             ?>
+
+            <?php
+            $deliveryModel = null;
+            if ($widget->shopOrder->shopDelivery && $widget->shopOrder->shopDelivery->handler) : ?>
+                <?php
+                $deliveryModel = $widget->shopOrder->deliveryHandlerCheckoutModel;
+                ?>
+                <div class="sx-delivery-checkout-handler">
+                    <?php echo $widget->shopOrder->shopDelivery->handler->renderCheckoutForm($form, $widget->shopOrder); ?>
+                </div>
+            <?php endif; ?>
+
         </div>
+
+
     <? endif; ?>
 
 
@@ -153,7 +173,12 @@ JS
         <? $alert::end(); ?>
 
     <? endif; ?>
-    <?= $form->errorSummary([$widget->shopOrder, $widget->shopBuyer, $widget->shopBuyer->relatedPropertiesModel]); ?>
+    <?
+    $errorModels = [$widget->shopOrder, $widget->shopBuyer, $widget->shopBuyer->relatedPropertiesModel];
+    if ($deliveryModel) {
+        $errorModels[] = $deliveryModel;
+    }
+    echo $form->errorSummary($errorModels); ?>
     <? $form::end(); ?>
 <? else : ?>
     Магазин не настроен

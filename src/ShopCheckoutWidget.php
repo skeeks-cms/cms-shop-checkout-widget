@@ -112,7 +112,6 @@ class ShopCheckoutWidget extends Widget
 
         //Установка присланных данных текущему покупателю
         if ($post = \Yii::$app->request->post()) {
-
             $this->shopOrder->load($post);
             if (!$this->shopOrder->save()) {
                 \Yii::error("Error widget: ".Json::encode($this->shopOrder->errors), static::class);
@@ -131,11 +130,26 @@ class ShopCheckoutWidget extends Widget
             }
         }
 
+        $deliveryCheckoutModel = null;
+        $shopDelivery = $this->shopOrder->shopDelivery;
+        if ($shopDelivery && $shopDelivery->handler) {
+            $deliveryCheckoutModel = $shopDelivery->handler->checkoutModel;
+            if ($post) {
+                $deliveryCheckoutModel->load($post);
+                //$deliveryCheckoutModel->validate();
+            }
+        }
+        
         if ($rr->isRequestPjaxPost() && \Yii::$app->request->post($this->id)) {
             //Если это не просто перестроение формы, то запускается процесс создания заказа
             if (!\Yii::$app->request->post($this->notSubmitParam)) {
                 $this->shopOrder->is_created = true;
-                if ($this->shopOrder->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate()) {
+                
+                $isValidDelivery = true;
+                if ($deliveryCheckoutModel) {
+                    $isValidDelivery = $deliveryCheckoutModel->validate();
+                }
+                if ($this->shopOrder->validate() && $this->shopBuyer->validate() && $this->shopBuyer->relatedPropertiesModel->validate() && $isValidDelivery) {
                     try {
                         //Сохранение покупателя
                         $buyer = $this->shopBuyer;
