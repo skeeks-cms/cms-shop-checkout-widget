@@ -12,6 +12,7 @@
 $widget = $this->context;
 $shopOrder = $widget->shopOrder;
 $clientOptions = \yii\helpers\Json::encode($widget->clientOptions);
+$deliveryModel = null;
 ?>
 <?= \yii\helpers\Html::beginTag('div', $widget->options); ?>
 
@@ -123,7 +124,6 @@ JS
             ?>
 
             <?php
-            $deliveryModel = null;
             if ($widget->shopOrder->shopDelivery && $widget->shopOrder->shopDelivery->handler) : ?>
                 <?php
                 $deliveryModel = $widget->shopOrder->deliveryHandlerCheckoutModel;
