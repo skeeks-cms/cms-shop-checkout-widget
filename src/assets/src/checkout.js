@@ -15,6 +15,10 @@
         {
             var self = this;
 
+            $(".field-shoporder-shop_delivery_id input").on('change', function() {
+                $("#shoporder-delivery_handler_data_jsoned").empty();
+            });
+
             $("[data-form-reload=true]").on('change', function()
             {
                 self.update();
