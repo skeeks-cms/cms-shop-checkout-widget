@@ -252,6 +252,7 @@ JS
     public function getEmail()
     {
         $rp = $this->shopBuyer->relatedPropertiesModel;
+        $rp->initAllProperties();
         $email = "";
 
         foreach ($rp->toArray() as $code => $value) {
@@ -259,7 +260,7 @@ JS
              * @var $property ShopPersonTypeProperty
              */
             $property = $rp->getRelatedProperty($code);
-            if ($property->is_user_email == Cms::BOOL_Y) {
+            if ($property->is_user_email == "Y") {
                 $email = $value;
             }
         }
@@ -279,6 +280,7 @@ JS
             return false;
         }
 
+
         //Нужно создать пользователя
         $userPhone = "";
         $userUsername = "";
@@ -291,15 +293,15 @@ JS
             /**
              * @var $property ShopPersonTypeProperty
              */
-            if ($property->is_user_name == Cms::BOOL_Y) {
+            if ($property->is_user_name == 'Y') {
                 $userName = $value;
             }
 
-            if ($property->is_user_username == Cms::BOOL_Y) {
+            if ($property->is_user_username == 'Y') {
                 $userUsername = $value;
             }
 
-            if ($property->is_user_phone == Cms::BOOL_Y) {
+            if ($property->is_user_phone == 'Y') {
                 $userPhone = $value;
             }
         }
@@ -335,6 +337,10 @@ JS
         if ($userPhone) {
             $user->phone = $userPhone;
             $user->save();
+        }
+
+        if ($user) {
+            \Yii::$app->user->login($user, 3600 * 24 * 365);
         }
 
         return $user;
