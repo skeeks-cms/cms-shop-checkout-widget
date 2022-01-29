@@ -312,7 +312,7 @@ JS
             return false;
         }
 
-        if ($userExist = CmsUser::find()->where(['email' => $userEmail])->one()) {
+        if ($userExist = CmsUser::find()->cmsSite()->email($userEmail)->one()) {
             return false;
         }
 
