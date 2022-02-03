@@ -199,6 +199,7 @@ class ShopCheckoutWidget extends Widget
 location.href='{$orderUrl}';
 JS
 );*/
+                        \Yii::$app->session->setFlash("order", $this->shopOrder->id);
                         \Yii::$app->response->redirect($orderUrl);
                         \Yii::$app->response->headers->set('X-Pjax-Url', $orderUrl);
 
