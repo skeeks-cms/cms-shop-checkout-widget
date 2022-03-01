@@ -206,7 +206,7 @@ JS
                         \Yii::$app->end();
 
                     } catch (\Exception $e) {
-                        /*throw $e;*/
+                        //throw $e;
                         $error = \Yii::t('skeeks/shop-checkout', 'Error').": ".$e->getMessage();
                     }
 
@@ -317,6 +317,10 @@ JS
             return false;
         }
 
+        if ($userExist = CmsUser::find()->cmsSite()->email($userPhone)->one()) {
+            return false;
+        }
+
         $newUser = new SignupForm();
         $newUser->scenario = SignupForm::SCENARION_ONLYEMAIL;
         $newUser->email = $userEmail;
@@ -324,6 +328,8 @@ JS
         if (!$user = $newUser->signup()) {
             return false;
         }
+
+        $user->refresh();
 
         if ($userUsername) {
             $user->username = $userUsername;
@@ -339,6 +345,8 @@ JS
             $user->phone = $userPhone;
             $user->save();
         }
+
+
 
         if ($user) {
             \Yii::$app->user->login($user, 3600 * 24 * 365);
