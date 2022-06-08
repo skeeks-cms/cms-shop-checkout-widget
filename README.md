@@ -1,38 +1,7 @@
 Widget shop checkout for SkeekS CMS
 ===================================
 
-Installation
-------------
-
-The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
-
-Either run
-
-```
-php composer.phar require --prefer-dist skeeks/cms-shop-checkout-widget "*"
-```
-
-or add
-
-```
-"skeeks/cms-shop-checkout-widget": "*"
-```
-
-Example
-----------
-
-```php
-
-<? $checkout = \skeeks\cms\shopCheckout\ShopCheckoutWidget::begin([
-    'btnSubmitWrapperOptions' =>
-    [
-        'style' => 'display: none;'
-    ]
-]); ?>
-<? \skeeks\cms\shopCheckout\ShopCheckoutWidget::end(); ?>
-
-```
-
+Проект больше не поддерживается!
 
 ##Links
 * [Web site](https://cms.skeeks.com)
